@@ -9,8 +9,9 @@ import Reviews from './Components/Reviews';
 import Footer from './Components/Footer';
 import ProductDetailPage from './Components/Details';
 import Addtocart from './Components/Addtocart';
+import ScrollToTop from './Components/ScrollToTop';  
 
-// 👇 HomePage create kia (sari sections ikatha)
+
 function HomePage() {
   return (
     <>
@@ -27,6 +28,7 @@ function App() {
   return (
     <>
       <Navbar />
+      <ScrollToTop /> 
       <Routes>
         {/* Home and single paths of every section */}
         <Route path="/" element={<HomePage />} />
