@@ -19,7 +19,6 @@ function HomePage() {
       <Secchero />
       <BrowseByStyle />
       <Reviews />
-      <Footer />
     </>
   );
 }
@@ -29,7 +28,7 @@ function App() {
     <>
       <Navbar />
       <Routes>
-      {/* Home and single paths of every section */}
+        {/* Home and single paths of every section */}
         <Route path="/" element={<HomePage />} />
         <Route path="/brands" element={<Brands />} />
         <Route path="/secchero" element={<Secchero />} />
