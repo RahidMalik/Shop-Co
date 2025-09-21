@@ -1,42 +1,15 @@
-import short1 from "../images/short1.png";
-import short2 from "../images/short2.png";
-import short3 from "../images/short3.png";
 import { ChevronRight } from "lucide-react";
-import { create } from "zustand";
+import { useCartStore } from "../store/DataStore";
+import { Trash2 } from "lucide-react";
 
-const prices = {
-  item1: 145,
-  item2: 180,
-  item3: 240,
-};
-
-const useCartStore = create((set) => ({
-  items: {
-    item1: 1,
-    item2: 1,
-    item3: 1,
-  },
-  increase: (key) =>
-    set((s) => ({
-      items: { ...s.items, [key]: Math.min(10, s.items[key] + 1) },
-    })),
-  decrease: (key) =>
-    set((s) => ({
-      items: { ...s.items, [key]: Math.max(1, s.items[key] - 1) },
-    })),
-}));
 
 export default function Addtocart() {
-  const { items, increase, decrease } = useCartStore();
+  const { cart, increase, decrease, removeFromCart } = useCartStore();
 
-  // subtotal calculate hoga 
-  const subtotal =
-    items.item1 * prices.item1 +
-    items.item2 * prices.item2 +
-    items.item3 * prices.item3;
-
+  // subtotal calculate
+  const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
   const discount = subtotal * 0.2; // 20% discount
-  const delivery = 15;
+  const delivery = cart.length > 0 ? 15 : 0; // agar cart empty hai to delivery = 0
   const total = subtotal - discount + delivery;
 
   return (
@@ -50,58 +23,60 @@ export default function Addtocart() {
         <span className="text-gray-900">Cart</span>
       </nav>
 
-      <div className="max-w-full mx-2 sm:mx-10  my-10 flex flex-col md:flex-row gap-6">
+      <div className="max-w-full mx-2 sm:mx-10 my-10 flex flex-col md:flex-row gap-6">
         {/* Left Side (Cart Items) */}
         <div className="flex-2 sm:border sm:border-gray-300 p-1 sm:p-6 rounded-lg w-full md:w-2/3">
           <h2 className="text-3xl font-extrabold mb-6">YOUR CART</h2>
 
-          {/* Item 1 */}
-          <div className="flex items-center justify-between border border-gray-300 p-4 mb-4 rounded-lg">
-            <img src={short1} alt="Gradient Graphic T-shirt" className="w-20 h-auto mr-4" />
-            <div className="flex-1">
-              <h4 className="text-lg font-bold">Gradient Graphic T-shirt</h4>
-              <p className="text-sm text-gray-600">Size: Large</p>
-              <p className="text-sm text-gray-600">Color: White</p>
-              <p className="text-lg font-bold mt-1">${prices.item1}</p>
-            </div>
-            <div className="flex items-center bg-gray-100 px-2 py-1 sm:px-4 sm:py-2 rounded-full gap-3 cursor-pointer">
-              <span onClick={() => decrease("item1")} className="text-lg">-</span>
-              <span className="text-lg">{items.item1}</span>
-              <span onClick={() => increase("item1")} className="text-lg">+</span>
-            </div>
-          </div>
+          {cart.length === 0 ? (
+            <p className="text-gray-600">Your cart is empty.</p>
+          ) : (
+            cart.map((item) => (
+              <div
+                key={item.id}
+                className="flex relative items-center justify-between border border-gray-300 p-4 mb-4 rounded-lg"
+              >
+                <img
+                  src={item.images[0]}
+                  alt={item.title}
+                  className="w-20 h-auto mr-4"
+                />
+                <div className="flex-1">
+                  <h4 className="text-lg font-bold">{item.title}</h4>
 
-          {/* Item 2 */}
-          <div className="flex items-center justify-between border border-gray-300 p-4 mb-4 rounded-lg">
-            <img src={short2} alt="Checkered Shirt" className="w-20 h-auto mr-4" />
-            <div className="flex-1">
-              <h4 className="text-lg font-bold">Checkered Shirt</h4>
-              <p className="text-sm text-gray-600">Size: Medium</p>
-              <p className="text-sm text-gray-600">Color: Red</p>
-              <p className="text-lg font-bold mt-1">${prices.item2}</p>
-            </div>
-            <div className="flex items-center bg-gray-100 px-2 py-1 sm:px-4 sm:py-2 rounded-full gap-3 cursor-pointer">
-              <span onClick={() => decrease("item2")} className="text-lg">-</span>
-              <span className="text-lg">{items.item2}</span>
-              <span onClick={() => increase("item2")} className="text-lg">+</span>
-            </div>
-          </div>
+                  <p className="text-sm text-gray-600">
+                    Size: {item.size || "Default"}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Color: {item.color || "Default"}
+                  </p>
+                  <p className="text-lg font-bold mt-1">${item.price}</p>
+                </div>
 
-          {/* Item 3 */}
-          <div className="flex items-center justify-between border border-gray-300 p-4 rounded-lg">
-            <img src={short3} alt="Skinny Fit Jeans" className="w-20 h-auto mr-4" />
-            <div className="flex-1">
-              <h4 className="text-lg font-bold">Skinny Fit Jeans</h4>
-              <p className="text-sm text-gray-600">Size: Large</p>
-              <p className="text-sm text-gray-600">Color: Blue</p>
-              <p className="text-lg font-bold mt-1">${prices.item3}</p>
-            </div>
-            <div className="flex items-center bg-gray-100 px-2 py-1 sm:px-4 sm:py-2 rounded-full gap-3 cursor-pointer">
-              <span onClick={() => decrease("item3")} className="text-lg">-</span>
-              <span className="text-lg">{items.item3}</span>
-              <span onClick={() => increase("item3")} className="text-lg">+</span>
-            </div>
-          </div>
+                {/* Quantity Control */}
+                <div className="flex items-center bg-gray-100 px-4 py-2 rounded-full gap-3">
+                  <span
+                    onClick={() => decrease(item.id)}
+                    className="text-lg cursor-pointer"
+                  >
+                    -
+                  </span>
+                  <span className="text-lg">{item.qty}</span>
+                  <span
+                    onClick={() => increase(item.id)}
+                    className="text-lg cursor-pointer"
+                  >
+                    +
+                  </span>
+                </div>
+                {/* Remove button */}
+                <button
+                  onClick={() => removeFromCart(item.id)} >
+                  <Trash2 className="w-5 h-5 absolute top-4 right-12 text-red-500 hover:text-red-700" />
+                </button>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Right Side (Order Summary) */}
