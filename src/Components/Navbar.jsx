@@ -137,7 +137,7 @@ export default function Navbar() {
 
               {/* User Dropdown Menu */}
               {userDropdown && currentUser && (
-                <div className="absolute right-0 top-full mt-2 w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                   {/* User Info Header */}
                   <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 rounded-t-lg">
                     <div className="flex items-center space-x-3">
